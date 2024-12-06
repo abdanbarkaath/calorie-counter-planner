@@ -1,25 +1,33 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import AdminLogin from './pages/AdminLogin';
+import AdminDashboard from './pages/AdminDashboard';
+import { Home } from './pages/Home';
+import { FoodSearchPage } from './pages/FoodSearchPage';
+import { Navbar } from './components/Navbar';
+import { FoodSummaryPage } from './pages/FoodSummaryPage';
 
-function App() {
+// Protected Route for Admin Dashboard
+const ProtectedRoute = ({ children }) => {
+  const isAuthenticated = Boolean(localStorage.getItem('adminToken'));
+  return isAuthenticated ? children : <Navigate to="/admin-login" />;
+};
+
+export const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Navbar />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/food-search" element={<FoodSearchPage />} />
+        <Route path="/admin-login" element={<AdminLogin />} />
+        <Route path="/admin-dashboard" element={
+          <ProtectedRoute>
+            <AdminDashboard />
+          </ProtectedRoute>
+        } />
+        <Route path="/food-summary" element={<FoodSummaryPage />} />
+      </Routes>
+    </Router>
   );
-}
-
-export default App;
+};
